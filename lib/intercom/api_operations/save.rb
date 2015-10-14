@@ -7,6 +7,8 @@ module Intercom
       module ClassMethods
         def create(params)
           instance = self.new(params)
+          return false if instance.try(:admin)
+          
           instance.mark_fields_as_changed!(params.keys)
           instance.save
         end

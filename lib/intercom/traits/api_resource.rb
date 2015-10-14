@@ -24,7 +24,11 @@ module Intercom
 
       def from_hash(hash)
         hash.each do |attribute, value|
-          next if type_field?(attribute)
+          if user_field?(attribute)
+            initialize_property(:user_id, value.id)
+            initialize_property(:admin, value.admin?)
+          end
+          next if type_field?(attribute) || user_field?(attribute)
           initialize_property(attribute, value)
         end
         initialize_missing_flat_store_attributes if respond_to? :flat_store_attributes
@@ -100,6 +104,10 @@ module Intercom
 
       def type_field?(attribute)
         attribute == 'type'
+      end
+
+      def user_field?(attribute)
+        attribute.to_s == 'user'
       end
 
       def initialize_missing_flat_store_attributes
